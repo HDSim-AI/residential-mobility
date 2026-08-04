@@ -18,17 +18,35 @@ from typing import Iterator
 from hdsim.core import Household, Member
 
 from .config import label_for
+from .facts import generate_facts_list, get_household_context
 
 HOUSEHOLD_KEY = "HOUSEID"
 PERSON_KEY = "PERSONID"
 TARGET = "MOVED_RECENTLY"
 
 
-def _to_household(household_id: str, rows: list[dict]) -> Household:
-    members = [
-        Member(person_id=int(row.get(PERSON_KEY, i + 1)), record=row, label=label_for(row))
-        for i, row in enumerate(sorted(rows, key=lambda r: r.get(PERSON_KEY, 0)))
-    ]
+def _to_household(household_id: str, rows: list[dict], group=None) -> Household:
+    """Build a family from its person rows.
+
+    PSID describes a family partly through fields that only make sense for the household as a
+    whole: tenure, income relative to need, prior moves, locality. `get_household_context` derives
+    those from the group, and the facts are written here because the loader is the only place that
+    holds every member at once. Without this a persona carries person-level facts alone, which is
+    roughly a third of what the published pipeline gives it.
+    """
+    context = {}
+    if group is not None:
+        try:
+            context = get_household_context(group)
+        except Exception:
+            context = {}
+
+    members = []
+    for i, row in enumerate(sorted(rows, key=lambda r: r.get(PERSON_KEY, 0))):
+        member = Member(person_id=int(row.get(PERSON_KEY, i + 1)), record=row, label=label_for(row))
+        if context:
+            member.facts = generate_facts_list(row, context)
+        members.append(member)
     # Moving is a property of the family, not of each person, so any member carrying the flag
     # gives the household's answer.
     truth = None
@@ -59,7 +77,7 @@ def load_csv(path: str | Path, *, household_key: str = HOUSEHOLD_KEY,
         rows = group.where(group.notna(), None).to_dict("records")
         if len(rows) < min_members:
             continue
-        households.append(_to_household(str(household_id), rows))
+        households.append(_to_household(str(household_id), rows, group))
         if max_households and len(households) >= max_households:
             break
     return households

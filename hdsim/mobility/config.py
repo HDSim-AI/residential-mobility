@@ -140,9 +140,15 @@ PSID = DomainConfig(
     anchor_for=anchor_for,
     # A persona written before the decision must not state the decision. PSID also asks families
     # whether they expect to move, and that answer is excluded upstream for the same reason.
+    # Only forward-looking statements are banned. Past moves are legitimate persona content:
+    # PSID records prior-wave mobility, and a family that moved in 2019 may say so. Banning the
+    # word outright would reject real history, which is the mistake the travel config made with
+    # "travel day". Leakage of the actual outcome is prevented upstream instead, by excluding the
+    # stated-intent fields from the record entirely.
     banned_patterns=[
-        r"\bmov(e|ed|ing)\b", r"\brelocat(e|ed|ing|ion)\b",
-        r"\bplan(ning)? to leave\b", r"\bexpect to (?:move|relocate)\b",
+        r"\b(?:plan|planning|intend|intending|expect|expecting|hope|hoping)\s+to\s+"
+        r"(?:move|relocate|leave)\b",
+        r"\bwill\s+(?:be\s+)?(?:mov|relocat)(?:e|ing)\b",
     ],
     describe_member=describe_member,
     relate_members=relate_members,
