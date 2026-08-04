@@ -13,18 +13,33 @@ panel record -> theory-grounded personas -> independent proposals -> moderated n
 Same two-phase PEMAND protocol as [`travel-decision`](https://github.com/HDSim-AI/travel-decision),
 with a classification decision head and an affordability feasibility check in the moderator.
 
-## Status
-
-🚧 **Initial code release in progress.** Until it lands, the
-[live demo](https://yushundong.github.io/pemand_simulation/pemand_official_site.html)
-replays three precomputed mobility scenarios in the browser with no setup required.
-
-Planned quick start:
+## Quick start
 
 ```bash
 pip install -e .
-hdsim-mobility demo   # replay a real household relocation decision
+hdsim demo                        # replay a recorded negotiation, no API key needed
 ```
+
+Simulate the bundled family against a model:
+
+```bash
+cp ../hdsim/.env.example .env     # add HDSIM_API_KEY
+python examples/run_mobility.py
+```
+
+```python
+from hdsim.mobility import PSID, build_personas, load_example, simulate
+
+family = load_example()
+build_personas(family, PSID)
+simulate(family, PSID)
+print(family.consensus_value)     # True or False
+```
+
+Real data: `load_psid("panel.csv")`. PSID requires registration at
+<https://psidonline.isr.umich.edu>. No survey data ships with this package.
+
+Requires [`hdsim`](https://github.com/HDSim-AI/hdsim), the method core.
 
 ## Contributing
 
