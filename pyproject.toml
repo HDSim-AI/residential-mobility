@@ -32,6 +32,9 @@ Paper = "https://arxiv.org/abs/2604.10475"
 [tool.setuptools.packages.find]
 include = ["hdsim*"]
 
+[tool.setuptools.package-data]
+"hdsim.mobility" = ["*.json"]
+
 [tool.ruff]
 line-length = 100
 target-version = "py310"

@@ -45,3 +45,9 @@ def test_facts_render_and_skip_unknowns():
     assert any("31-year-old man" in f for f in facts)
     # An empty record yields only the baseline membership statement, never invented attributes.
     assert generate_facts_list({}) == ["I am a member of this household."]
+
+
+def test_uses_the_mobility_copb_prompt_not_another_domains():
+    """Each domain carries its own prompt. Running the wrong one is a silent wrong answer."""
+    assert "residential mobility" in PSID.copb_system.lower()
+    assert "Transportation Behavioral Psychologist" not in PSID.copb_system

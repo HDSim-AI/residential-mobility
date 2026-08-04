@@ -8,6 +8,7 @@ from __future__ import annotations
 
 from hdsim.core import DecisionTask, DomainConfig
 
+from .copb import ACTOR_SYSTEM_PROMPT, COPB_USER_TEMPLATE
 from .facts import generate_facts_list
 
 # --- what is being decided ------------------------------------------------------------------------
@@ -138,6 +139,8 @@ PSID = DomainConfig(
     facts_fn=generate_facts_list,
     anchors=ANCHORS,
     anchor_for=anchor_for,
+    copb_system=ACTOR_SYSTEM_PROMPT,
+    copb_user=COPB_USER_TEMPLATE,
     # A persona written before the decision must not state the decision. PSID also asks families
     # whether they expect to move, and that answer is excluded upstream for the same reason.
     # Only forward-looking statements are banned. Past moves are legitimate persona content:
