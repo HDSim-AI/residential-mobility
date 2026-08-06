@@ -20,24 +20,28 @@ Household **move-or-stay relocation decisions** simulated via persona-enriched m
 
 <img src="./docs/demo.gif" width="100%" alt="A two-member PSID household negotiating whether to move, ending in yes">
 
-## 🧭 What can this do?
+## What this does
 
-`hdsim.mobility` predicts whether a household moves. It reads PSID panel records and returns a yes
-or no for each family, along with the conversation among the family members that produced it.
+Predicts whether a household moves. It reads PSID panel records and returns a yes or no for each
+family, with the conversation that produced it.
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="./docs/pipeline-mobility-dark.svg">
+  <img src="./docs/pipeline-mobility-light.svg" width="100%" alt="A panel record becomes personas, then independent proposals, then a moderated negotiation, then a move-or-stay decision">
+</picture>
+
+Moving is a yes or no rather than a count, so this domain adds a classification decision head and an
+affordability check in the moderator. Everything else is the protocol
+[`travel-decision`](https://github.com/HDSim-AI/travel-decision) uses.
 
 | You are trying to… | What you get |
 |---|---|
 | Plan for evacuation or post-disaster relocation | Move or stay, household by household |
 | Test a housing or rent policy you cannot field a survey for | A counterfactual run on families already in your data |
-| Understand which member drives a household's decision | The negotiation transcript, including who objects and why |
-| Fill in a group your panel covers thinly | Decisions for those families, from the records you do have |
+| Understand which member drives a household's decision | The transcript, including who objects and why |
 
 On PSID 2021–2023 this raises F1 from 0.55 to 0.73 against the strongest classical baseline.
 Table 1, [arXiv:2604.10475](https://arxiv.org/abs/2604.10475).
-
-Moving is a yes or no rather than a count, so this domain adds a classification decision head and an
-affordability check in the moderator. Everything else is the same protocol as
-[`travel-decision`](https://github.com/HDSim-AI/travel-decision).
 
 | You want to… | Go to |
 |---|---|
@@ -45,15 +49,6 @@ affordability check in the moderator. Everything else is the same protocol as
 | Understand the method itself | [hdsim](https://github.com/HDSim-AI/hdsim) |
 | See a move-or-stay case replayed in the browser | [Live demo](https://yushundong.github.io/pemand_simulation/pemand_official_site.html) |
 | Predict household trips instead | [travel-decision](https://github.com/HDSim-AI/travel-decision) |
-
-## How it works
-
-```
-panel record -> theory-grounded personas -> independent proposals -> moderated negotiation -> move / stay
-```
-
-Same two-phase PEMAND protocol as [`travel-decision`](https://github.com/HDSim-AI/travel-decision),
-with a classification decision head and an affordability feasibility check in the moderator.
 
 ## Quick start
 
@@ -90,9 +85,10 @@ Requires [`hdsim`](https://github.com/HDSim-AI/hdsim), the method core.
 
 ## Contributing
 
-Issues and pull requests are welcome, especially new scenarios, panel loaders, agent
-skills, and evaluations. See the [organization page](https://github.com/HDSim-AI) for
-the project scope.
+Loaders for another household panel, better fact translations, new scenarios and evaluations all
+belong here; see [CONTRIBUTING.md](CONTRIBUTING.md). Changes to the method itself belong in
+[`hdsim`](https://github.com/HDSim-AI/hdsim), and adding a whole new decision is
+[one file](https://github.com/HDSim-AI/hdsim/blob/main/examples/minimal_domain.py).
 
 ## Citation
 
