@@ -21,10 +21,9 @@ the poverty line and 5.65 means comfortable. A high ratio is financial room, not
 from __future__ import annotations
 
 import math
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 import pandas as pd
-
 
 KEY_COLUMNS_FOR_PERSONA = [
     "HOUSEID",
@@ -71,7 +70,7 @@ KEY_COLUMNS_FOR_PERSONA = [
 ]
 
 
-def clean_float(val: Any) -> Optional[float]:
+def clean_float(val: Any) -> float | None:
     if val is None or (isinstance(val, float) and math.isnan(val)):
         return None
     try:
@@ -80,14 +79,14 @@ def clean_float(val: Any) -> Optional[float]:
         return None
 
 
-def safe_int(val: Any) -> Optional[int]:
+def safe_int(val: Any) -> int | None:
     c = clean_float(val)
     if c is None or c >= 999:
         return None
     return int(c)
 
 
-def map_sex(code: Any) -> Optional[str]:
+def map_sex(code: Any) -> str | None:
     c = clean_float(code)
     if c == 1:
         return "male"
@@ -96,7 +95,7 @@ def map_sex(code: Any) -> Optional[str]:
     return None
 
 
-def map_employment(code: Any) -> Optional[str]:
+def map_employment(code: Any) -> str | None:
     mapping = {
         1: "working now",
         2: "temporarily laid off",
@@ -158,7 +157,7 @@ def map_relation_to_head(code: Any) -> str:
     return "another member of this household"
 
 
-def map_marital(code: Any) -> Optional[str]:
+def map_marital(code: Any) -> str | None:
     """ER82026, RP marital status. PSID 2023 codes: 1=Married, 2=Never married, 3=Widowed,
     4=Divorced/annulled, 5=Separated, 8=DK, 9=NA/refused."""
     c = clean_float(code)
@@ -174,7 +173,7 @@ def map_marital(code: Any) -> Optional[str]:
     return m.get(int(c))
 
 
-def map_tenure(code: Any) -> Optional[str]:
+def map_tenure(code: Any) -> str | None:
     c = clean_float(code)
     if c is None or c >= 98:
         return None
@@ -193,7 +192,7 @@ def map_tenure(code: Any) -> Optional[str]:
 
 
 
-def map_health(code: Any) -> Optional[str]:
+def map_health(code: Any) -> str | None:
     """Family-file self-rated health ladder (ER84520 RP / ER84721 SP).
     Codes: 1=Excellent, 2=Very good, 3=Good, 4=Fair, 5=Poor, 8=DK, 9=NA."""
     c = clean_float(code)
@@ -203,7 +202,7 @@ def map_health(code: Any) -> Optional[str]:
     return ladder.get(int(c))
 
 
-def map_individual_health_good(code: Any) -> Optional[str]:
+def map_individual_health_good(code: Any) -> str | None:
     """ER35188 ('HEALTH GOOD? 23'), binary in PSID 2023: 1=Yes in poor health, 5=No not in poor health.
     Different from family-file ladder; do not reuse map_health."""
     c = clean_float(code)
@@ -216,7 +215,7 @@ def map_individual_health_good(code: Any) -> Optional[str]:
     return None
 
 
-def map_degree_type(code: Any) -> Optional[str]:
+def map_degree_type(code: Any) -> str | None:
     """
     Map PSID 2023 ER35135 (TYPE OF HIGHEST DEGREE).
 
@@ -241,7 +240,7 @@ def map_degree_type(code: Any) -> Optional[str]:
     return deg.get(ic)
 
 
-def map_rp_sp_education_fam(code: Any) -> Optional[str]:
+def map_rp_sp_education_fam(code: Any) -> str | None:
     """Family-file completed-education years for RP / SP (ER85780 / ER85781).
 
     PSID format (FAM2023ER): 0='No grades of school', 1-17='Actual number of years',
@@ -260,7 +259,7 @@ def map_rp_sp_education_fam(code: Any) -> Optional[str]:
     return years_education_label(c)
 
 
-def years_education_label(yrs: Any) -> Optional[str]:
+def years_education_label(yrs: Any) -> str | None:
     """Convert ER35152 (YEARS COMPLETED EDUCATION) to a human phrase."""
     y = clean_float(yrs)
     if y is None or y <= 0 or y >= 99:
@@ -281,7 +280,7 @@ def years_education_label(yrs: Any) -> Optional[str]:
     return f"about {iy} years of schooling"
 
 
-def map_beale_rurality(er85774: Any) -> Optional[str]:
+def map_beale_rurality(er85774: Any) -> str | None:
     c = safe_int(er85774)
     if c is None:
         return None
@@ -294,7 +293,7 @@ def map_beale_rurality(er85774: Any) -> Optional[str]:
     return None
 
 
-def income_to_needs_ratio_ctx(inc: Any, needs: Any) -> Optional[float]:
+def income_to_needs_ratio_ctx(inc: Any, needs: Any) -> float | None:
     """ER85629 (total family income 2022, dollars) ÷ ER85770 (census needs standard 2022, dollars).
     Negative income is legitimate (business losses), so allow any non-DK value."""
     ia = clean_float(inc)
@@ -304,7 +303,7 @@ def income_to_needs_ratio_ctx(inc: Any, needs: Any) -> Optional[float]:
     return float(ia / na)
 
 
-def immigrant_supplement_flag(er82009: Any) -> Optional[int]:
+def immigrant_supplement_flag(er82009: Any) -> int | None:
     v = clean_float(er82009)
     if v is None:
         return None
@@ -314,7 +313,7 @@ def immigrant_supplement_flag(er82009: Any) -> Optional[int]:
     return 0
 
 
-def map_race_rp(code: Any) -> Optional[str]:
+def map_race_rp(code: Any) -> str | None:
     """ER85121, L40 RACE OF REFERENCE PERSON-MENTION 1. Codes: 1 White, 2 Black/African-American,
     3 American Indian/Alaska Native, 4 Asian, 5 Native Hawaiian/Pacific Islander, 7 Other, 9 DK/NA."""
     c = clean_float(code)
@@ -331,7 +330,7 @@ def map_race_rp(code: Any) -> Optional[str]:
     return m.get(int(c))
 
 
-def map_ethnic_rp(code: Any) -> Optional[str]:
+def map_ethnic_rp(code: Any) -> str | None:
     """ER85126, L41 ETHNIC GROUP-RP. Codes: 1 American, 2 hyphenated, 3 national origin,
     4 Hispanic, 5 racial, 6 religious, 7 other, 9 DK/NA."""
     c = clean_float(code)
@@ -349,7 +348,7 @@ def map_ethnic_rp(code: Any) -> Optional[str]:
     return m.get(int(c))
 
 
-def births_2021_count(er85809: Any) -> Optional[int]:
+def births_2021_count(er85809: Any) -> int | None:
     """ER85809 - BIRTHS TO REF PERSON AND SPOUSE-2021. Codes: 0 None, 1 One, 2 Two, 3 Three,
     8 DK/NA, **9 = no Spouse/Partner in FU or not asked** (inapplicable, NOT a count).
     Returns the count (0-3) or None for DK/inapplicable."""
@@ -359,7 +358,7 @@ def births_2021_count(er85809: Any) -> Optional[int]:
     return int(c)
 
 
-def get_household_context(group_df: pd.DataFrame) -> Dict[str, Any]:
+def get_household_context(group_df: pd.DataFrame) -> dict[str, Any]:
     """Shared context from first row of a household group (all rows share family fields)."""
     row = group_df.iloc[0]
     hh_size = safe_int(row.get("ER82017"))
@@ -387,7 +386,7 @@ def get_household_context(group_df: pd.DataFrame) -> Dict[str, Any]:
     race_label = map_race_rp(row.get("ER85121"))
     eth_label = map_ethnic_rp(row.get("ER85126"))
 
-    ctx: Dict[str, Any] = {
+    ctx: dict[str, Any] = {
         "hh_size": hh_size,
         "income": income,
         "own_rent_label": own_rent,
@@ -426,13 +425,13 @@ def get_household_context(group_df: pd.DataFrame) -> Dict[str, Any]:
     return ctx
 
 
-def household_context_facts(ctx: Dict[str, Any], member_relation_code: Any = None) -> List[str]:
+def household_context_facts(ctx: dict[str, Any], member_relation_code: Any = None) -> list[str]:
     """
     Narrated shared constraints (prepended to every member's fact list).
 
     Omits rooms, housing value/rent (post-move), move intent, move reasons, those carry leakage or duplicate tenure.
     """
-    facts: List[str] = []
+    facts: list[str] = []
     rel = clean_float(member_relation_code)
     is_rp = rel is not None and int(rel) == 10
     is_sp = rel is not None and int(rel) in (20, 22, 90)
@@ -538,7 +537,7 @@ def household_context_facts(ctx: Dict[str, Any], member_relation_code: Any = Non
         elif t <= 0.0:
             phrase = "less than a year (the household had just moved during 2019–2021)"
         elif abs(t - round(t)) < 1e-6:
-            phrase = f"about {int(round(t))} year(s)"
+            phrase = f"about {round(t)} year(s)"
         else:
             phrase = f"about {t:.1f} years"
         # Keep the explicit "(prior-wave snapshot)" tag so the writer cannot
@@ -550,7 +549,7 @@ def household_context_facts(ctx: Dict[str, Any], member_relation_code: Any = Non
         )
     mc = ctx.get("bh_move_count_prior_waves")
     if mc is not None and not (isinstance(mc, float) and math.isnan(float(mc))):
-        n = int(round(float(mc)))
+        n = round(float(mc))
         word = {0: "did not move", 1: "moved once", 2: "moved twice"}.get(n, f"moved {n} times")
         facts.append(
             f"Panel history (2017–2019 and 2019–2021 windows): the household {word} across those two prior waves."
@@ -565,7 +564,7 @@ def household_context_facts(ctx: Dict[str, Any], member_relation_code: Any = Non
         )
     hdc = ctx.get("bh_hhsize_delta_prior_max")
     if hdc is not None and not (isinstance(hdc, float) and math.isnan(float(hdc))):
-        d = int(round(float(hdc)))
+        d = round(float(hdc))
         if d == 0:
             phrase = "remained the same"
         else:
@@ -576,12 +575,12 @@ def household_context_facts(ctx: Dict[str, Any], member_relation_code: Any = Non
     return facts
 
 
-def _education_facts_for_row(row: pd.Series) -> List[str]:
+def _education_facts_for_row(row: pd.Series) -> list[str]:
     """
     Emit at most ONE education fact per person to avoid contradictions.
     Priority: degree (if got college degree) > years_education label > family-file fallback.
     """
-    facts: List[str] = []
+    facts: list[str] = []
     age = clean_float(row.get("AGE") if "AGE" in row else row.get("ER35104"))
     seq = safe_int(row.get("PERSONID") if "PERSONID" in row else row.get("ER35102"))
     deg_type = row.get("DEGREE_TYPE") if "DEGREE_TYPE" in row else row.get("ER35135")
@@ -612,7 +611,7 @@ def _education_facts_for_row(row: pd.Series) -> List[str]:
     return facts
 
 
-def generate_facts_list(row: pd.Series, hh_context: Optional[Dict[str, Any]] = None) -> List[str]:
+def generate_facts_list(row: pd.Series, hh_context: dict[str, Any] | None = None) -> list[str]:
     """
     Factual first-person bullet list for one person.
     Order: household context → identity → composition → work/education → health → mobility hints.
@@ -623,7 +622,7 @@ def generate_facts_list(row: pd.Series, hh_context: Optional[Dict[str, Any]] = N
     sex_code = row.get("SEX") if "SEX" in row else row.get("ER32000")
     sex = map_sex(sex_code)
 
-    facts: List[str] = []
+    facts: list[str] = []
     if hh_context:
         facts.extend(household_context_facts(hh_context, member_relation_code=rel))
 
@@ -676,6 +675,6 @@ def generate_facts_list(row: pd.Series, hh_context: Optional[Dict[str, Any]] = N
     return facts
 
 
-def generate_individual_narrative(row: pd.Series, hh_context: Optional[Dict[str, Any]] = None) -> str:
+def generate_individual_narrative(row: pd.Series, hh_context: dict[str, Any] | None = None) -> str:
     """Backward-compatible single string (joined facts)."""
     return " ".join(generate_facts_list(row, hh_context))

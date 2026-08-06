@@ -1,6 +1,7 @@
 """Mobility domain tests. No API key, no network, no PSID download."""
 
 from hdsim.core import parse_value
+
 from hdsim.mobility import PSID, anchor_for, generate_facts_list, load_example
 
 
@@ -35,7 +36,7 @@ def test_persona_may_not_state_the_outcome():
 
 def test_stated_move_intention_mappers_are_not_shipped():
     """Those fields predict the label directly and were excluded upstream. Keep them out."""
-    import hdsim.mobility.facts as facts
+    from hdsim.mobility import facts
     for name in ("map_might_move", "map_move_likelihood", "map_why_moved"):
         assert not hasattr(facts, name), f"{name} should not be in the public package"
 

@@ -149,8 +149,10 @@ PSID = DomainConfig(
     # "travel day". Leakage of the actual outcome is prevented upstream instead, by excluding the
     # stated-intent fields from the record entirely.
     banned_patterns=[
-        r"\b(?:plan|planning|intend|intending|expect|expecting|hope|hoping)\s+to\s+"
-        r"(?:move|relocate|leave)\b",
+        (
+            r"\b(?:plan|planning|intend|intending|expect|expecting|hope|hoping)\s+to\s+"
+            r"(?:move|relocate|leave)\b"
+        ),
         r"\bwill\s+(?:be\s+)?(?:mov|relocat)(?:e|ing)\b",
     ],
     describe_member=describe_member,

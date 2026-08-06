@@ -12,8 +12,8 @@ any download.
 from __future__ import annotations
 
 import json
+from collections.abc import Iterator
 from pathlib import Path
-from typing import Iterator
 
 from hdsim.core import Household, Member
 
@@ -38,8 +38,8 @@ def _to_household(household_id: str, rows: list[dict], group=None) -> Household:
     if group is not None:
         try:
             context = get_household_context(group)
-        except Exception:
-            context = {}
+        except Exception:  # noqa: BLE001 - context is optional; a bad group must not
+            context = {}   # stop the rest of the household from loading
 
     members = []
     for i, row in enumerate(sorted(rows, key=lambda r: r.get(PERSON_KEY, 0))):
