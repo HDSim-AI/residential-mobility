@@ -521,9 +521,9 @@ def household_context_facts(ctx: dict[str, Any], member_relation_code: Any = Non
     ec = ctx.get("ethnic_rp_label")
     if ec:
         facts.append(f"Household context: the reference person's ethnic identification is {ec}.")
-    # Behavioral biography from earlier PSID waves (2019 + 2021, strictly pre-2023).
-    # These come from the persona-only BH supplement (variable_plan.md §2.5); they are NOT
-    # carried in the ML CSVs or in hh_summary.
+    # Behavioral biography from earlier PSID waves (2019 and 2021, strictly pre-2023). These
+    # describe the household's own history and are used only to write the persona. They are never
+    # part of the feature table a predictive model sees, so the two are not comparable inputs.
     ten = ctx.get("bh_tenure_years_2021")
     if ten is not None and not (isinstance(ten, float) and math.isnan(float(ten))):
         t = float(ten)

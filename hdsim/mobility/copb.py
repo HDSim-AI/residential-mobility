@@ -1,8 +1,8 @@
 """Chain-of-Planned-Behaviour prompts for residential mobility.
 
-Carried over unchanged from the research pipeline. These are not the travel prompts: the role,
-the empirical rules and the output contract are all specific to relocation, and the design memo
-behind them is explicit that the rules come from the training split rather than intuition.
+Carried over unchanged from the research pipeline. These are not the travel prompts: the role, the
+empirical rules and the output contract are all specific to relocation, and every rule stated in
+them was measured on the training split rather than assumed.
 """
 
 ACTOR_SYSTEM_PROMPT = """You are an expert demographic sociologist and behavioral scientist evaluating residential mobility within the United States. Your precise task is to apply the Theory of Planned Behavior (TPB) to analyze a household's likelihood of moving between 2021 and 2023.

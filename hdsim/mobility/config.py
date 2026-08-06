@@ -26,9 +26,9 @@ RELOCATION = DecisionTask(
 
 # --- empirical baseline -----------------------------------------------------------------------------
 # Share of families in the PSID 2021 to 2023 training cohort that moved: 30.24% of 8,225 households.
-# Used as a qualitative prior for the persona to reason against, not as a threshold. The published
-# design memo is explicit that treating it as a cutoff produces class collapse, because language
-# models compare numbers poorly inside natural language.
+# Used as a qualitative prior for the persona to reason against, not as a threshold. Treating it as
+# a cutoff collapses the classes: language models compare numbers poorly inside natural language,
+# so every household lands on the same side of the line.
 BASE_RATE = 0.3024
 
 # Directional priors, each measured on the training split rather than assumed. Homeownership is the
