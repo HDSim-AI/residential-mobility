@@ -30,8 +30,8 @@ family, with the conversation that produced it.
   <img src="./docs/pipeline-mobility-light.svg" width="100%" alt="A panel record becomes personas, then independent proposals, then a moderated negotiation, then a move-or-stay decision">
 </picture>
 
-Moving is a yes or no rather than a count, so this domain adds a classification decision head and an
-affordability check in the moderator. Everything else is the protocol
+Moving is a yes or no rather than a count, so the household's answer is a majority of the members'
+final positions rather than a sum. Everything else is the protocol
 [`travel-decision`](https://github.com/HDSim-AI/travel-decision) uses.
 
 | You are trying to… | What you get |
