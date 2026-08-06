@@ -30,14 +30,14 @@ family, with the conversation that produced it.
   <img src="./docs/pipeline-mobility-light.svg" width="100%" alt="A panel record becomes personas, then independent proposals, then a moderated negotiation, then a move-or-stay decision">
 </picture>
 
-Moving is a yes or no rather than a count, so the household's answer is a majority of the members'
-final positions rather than a sum. Everything else is the protocol
+Moving is a yes or no rather than a count, so the household's answer is taken as the yes or no the
+discussion reaches, not summed across members. Everything else is the protocol
 [`travel-decision`](https://github.com/HDSim-AI/travel-decision) uses.
 
 | You are trying to… | What you get |
 |---|---|
 | Plan for evacuation or post-disaster relocation | Move or stay, household by household |
-| Test a housing or rent policy you cannot field a survey for | A counterfactual run on families already in your data |
+| Test a housing or rent policy you cannot field a survey for | Predictions for the families you already have, with no new fieldwork |
 | Understand which member drives a household's decision | The transcript, including who objects and why |
 
 On PSID 2021–2023 this raises F1 from 0.55 to 0.73 against the strongest classical baseline.
