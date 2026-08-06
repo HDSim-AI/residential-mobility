@@ -16,7 +16,7 @@ Household **move-or-stay relocation decisions** simulated via persona-enriched m
 <a href="https://pepy.tech/project/hdsim-mobility"><img src="https://static.pepy.tech/badge/hdsim-mobility" alt="PyPI downloads"></a>
 -->
 
-Part of the [HDSim](https://github.com/HDSim-AI) ecosystem.
+**A domain package.** The method lives in [`hdsim`](https://github.com/HDSim-AI/hdsim), the core; this repository adds only the panel loader and the configuration for one decision. [`travel-decision`](https://github.com/HDSim-AI/travel-decision) is the other.
 
 <img src="./docs/demo.gif" width="100%" alt="A two-member PSID household negotiating whether to move, ending in yes">
 
