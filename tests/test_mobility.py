@@ -52,3 +52,25 @@ def test_uses_the_mobility_copb_prompt_not_another_domains():
     """Each domain carries its own prompt. Running the wrong one is a silent wrong answer."""
     assert "residential mobility" in PSID.copb_system.lower()
     assert "Transportation Behavioral Psychologist" not in PSID.copb_system
+
+
+def test_every_documented_import_resolves():
+    """The README and the examples are executable claims. `hdsim` is a namespace package with
+    nothing at top level, so `from hdsim import x` reads fine and fails at runtime."""
+    import importlib
+    import pathlib
+    import re
+
+    root = pathlib.Path(__file__).resolve().parent.parent
+    sources = [root / "README.md", *sorted((root / "examples").glob("*.py"))]
+    checked = 0
+    for path in sources:
+        if not path.is_file():
+            continue
+        for module, names in re.findall(r"^from (hdsim[\w.]*) import ([^\n#]+)",
+                                        path.read_text(), re.MULTILINE):
+            mod = importlib.import_module(module)
+            for name in (n.strip() for n in names.split(",")):
+                assert hasattr(mod, name), f"{path.name}: {module} has no {name!r}"
+                checked += 1
+    assert checked, "no documented imports found to check"
