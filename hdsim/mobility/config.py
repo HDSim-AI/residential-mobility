@@ -133,9 +133,39 @@ def relate_members(me, other) -> str:
 
 # --- the domain -------------------------------------------------------------------------------------
 
+def household_roster(household) -> str:
+    """A roster built from what the loader read, rather than re-parsed from the persona text.
+
+    **Not used by default, and not what produced the published results.** The core's stage-two
+    roster recovers attributes with travel-survey patterns ("I am a worker", "household owns N
+    vehicles"). On this domain those patterns miss, so it reports "non-worker, non-driver, age ?"
+    as canonical fact over personas that say the person works. That is a real defect, but the
+    published PSID runs used that roster, so replacing it silently would move Table 1's numbers.
+
+    Opt in with `DomainConfig(..., household_roster=household_roster)` when you care more about
+    the roster being true than about matching the paper.
+    """
+    lines = [
+        "=== HOUSEHOLD ROSTER ===",
+        "(canonical; do NOT invent any attribute not stated below; do NOT add members)",
+        f"Household size: {len(household.members)}.",
+        "",
+        "Members:",
+    ]
+    for member in household.members:
+        lines.append(f"  - {member.label or f'Member {member.person_id}'}: "
+                     f"{describe_member(member)}")
+    lines.append("=========================")
+    return "\n".join(lines)
+
+
 PSID = DomainConfig(
     name="psid",
     task=RELOCATION,
+    # NOTE: `household_roster` above is deliberately NOT set here. The published runs used the
+    # core's stage-two roster for this domain as well, so overriding it would change the numbers
+    # in Table 1. Pass `household_roster=household_roster` yourself if you would rather the
+    # roster stated only what the PSID record establishes; see its docstring for why that differs.
     facts_fn=generate_facts_list,
     anchors=ANCHORS,
     anchor_for=anchor_for,
