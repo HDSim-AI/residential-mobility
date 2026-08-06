@@ -47,18 +47,40 @@ def _to_household(household_id: str, rows: list[dict], group=None) -> Household:
         if context:
             member.facts = generate_facts_list(row, context)
         members.append(member)
-    # Moving is a property of the family, not of each person, so any member carrying the flag
-    # gives the household's answer.
-    truth = None
+    return Household(household_id=str(household_id), members=members,
+                     ground_truth=_ground_truth(rows))
+
+
+# PSID codes the move question (A49, "whether moved since January 1 of the prior year") as
+# 1 = Yes, 5 = No, 8 = DK, 9 = NA. Verified against FAM2023ER_formats.sas. Reading it as a plain
+# truth value makes every "No" household a mover, which is the one error that cannot be caught
+# downstream: it corrupts the label the model is scored against, not the prediction.
+MOVED_CODES = {1: True, 5: False, 0: False}
+MOVED_MISSING = {8, 9, 98, 99, -1, -7, -8, -9}
+
+
+def _ground_truth(rows: list[dict]) -> bool | None:
+    """Whether the family moved. `None` when the survey does not say.
+
+    Moving is a property of the family rather than of each person, so the first member carrying a
+    usable answer settles it. An unrecognised code is reported as no answer rather than guessed:
+    a household with no label is skipped by `evaluate`, a household with a wrong one is scored.
+    """
+    import math
+
     for row in rows:
         value = row.get(TARGET)
-        if value is not None:
-            try:
-                truth = bool(int(float(value)))
-            except (TypeError, ValueError):
-                truth = bool(value)
-            break
-    return Household(household_id=str(household_id), members=members, ground_truth=truth)
+        if value is None or (isinstance(value, float) and math.isnan(value)):
+            continue
+        try:
+            code = int(float(value))
+        except (TypeError, ValueError):
+            continue                      # a string such as "no" is not a code; do not guess
+        if code in MOVED_MISSING:
+            continue
+        if code in MOVED_CODES:
+            return MOVED_CODES[code]
+    return None
 
 
 def load_csv(path: str | Path, *, household_key: str = HOUSEHOLD_KEY,
